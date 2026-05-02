@@ -8,7 +8,7 @@ export default function Navbar() {
       <div className="container navbar-container">
         <Link to="/" className="navbar-logo">
           {/* Si guardas la imagen en public/logo.jpg se mostrará aquí */}
-          <img src="/logo.jpg" alt="Safiro Nails Logo" className="logo-img" style={{ maxHeight: '120px', maxWidth: '300px', width: 'auto', height: 'auto', objectFit: 'contain' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+          <img src={`${import.meta.env.BASE_URL}logo.jpg`} alt="Safiro Nails Logo" className="logo-img" style={{ maxHeight: '120px', maxWidth: '300px', width: 'auto', height: 'auto', objectFit: 'contain' }} onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
           <div className="logo-text" style={{ display: 'none', alignItems: 'center', gap: '0.5rem' }}>
             <Scissors className="logo-icon" />
             <span>Safiro Nails</span>
@@ -16,8 +16,8 @@ export default function Navbar() {
         </Link>
         <nav className="navbar-links">
           <Link to="/">Inicio</Link>
-          <a href="/#about">Nosotros</a>
-          <a href="/#services">Servicios</a>
+          <a href={`${import.meta.env.BASE_URL}#about`}>Nosotros</a>
+          <a href={`${import.meta.env.BASE_URL}#services`}>Servicios</a>
           <Link to="/galeria">Galería</Link>
         </nav>
       </div>

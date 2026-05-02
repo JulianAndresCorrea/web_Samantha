@@ -32,7 +32,7 @@ export default function LandingPage() {
             <div className="about-image-placeholder">
               <div className="decor-box">
                 {/* Logo en la sección Nosotros */}
-                <img src="/logo.jpg" alt="Safiro Nails" className="about-logo" onError={(e) => { e.target.style.display = 'none'; }} />
+                <img src={`${import.meta.env.BASE_URL}logo.jpg`} alt="Safiro Nails" className="about-logo" onError={(e) => { e.target.style.display = 'none'; }} />
               </div>
             </div>
           </div>

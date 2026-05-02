@@ -16,8 +16,8 @@ export default function Footer() {
             <h4>Enlaces</h4>
             <ul>
               <li><Link to="/">Inicio</Link></li>
-              <li><a href="/#about">Nosotros</a></li>
-              <li><a href="/#services">Servicios</a></li>
+              <li><a href={`${import.meta.env.BASE_URL}#about`}>Nosotros</a></li>
+              <li><a href={`${import.meta.env.BASE_URL}#services`}>Servicios</a></li>
               <li><Link to="/galeria">Galería</Link></li>
             </ul>
           </div>
