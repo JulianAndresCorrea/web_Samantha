@@ -16,8 +16,8 @@ export default function Navbar() {
         </Link>
         <nav className="navbar-links">
           <Link to="/">Inicio</Link>
-          <a href={`${import.meta.env.BASE_URL}#about`}>Nosotros</a>
-          <a href={`${import.meta.env.BASE_URL}#services`}>Servicios</a>
+          <a href="#/#about">Nosotros</a>
+          <a href="#/#services">Servicios</a>
           <Link to="/galeria">Galería</Link>
         </nav>
       </div>
