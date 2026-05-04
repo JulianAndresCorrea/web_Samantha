@@ -53,15 +53,15 @@ export const getImagesByCategory = async (categoryName, folderId) => {
     // Log más descriptivo para ayudar al usuario a diagnosticar
     const status = error.response?.status;
     const message = error.response?.data?.error?.message || error.message;
-    
+
     console.error(`Error en categoría ${categoryName} (${status}): ${message}`);
-    
+
     if (status === 404) {
       console.error(`Sugerencia: Verifica que el ID de la carpeta '${folderId}' sea correcto y que esté compartida como "Cualquier persona con el enlace".`);
     } else if (status === 403) {
       console.error(`Sugerencia: Verifica que la API de Google Drive esté habilitada en Google Cloud Console y que la API Key no tenga restricciones de IP/Referer incorrectas.`);
     }
-    
+
     throw error; // Re-lanzamos para que el componente sepa que hubo un error real
   }
 };

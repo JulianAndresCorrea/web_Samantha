@@ -14,7 +14,7 @@ export default function Gallery({ limit, showFilters = false }) {
     async function fetchGallery() {
       setLoading(true);
       const driveImages = await getAllImages();
-      
+
       if (driveImages === null) {
         // Error real de conexión/configuración con Drive
         setError(true);
@@ -42,8 +42,39 @@ export default function Gallery({ limit, showFilters = false }) {
   const openLightbox = (img) => setSelectedImage(img);
   const closeLightbox = () => setSelectedImage(null);
 
-  const filteredImages = activeFilter === 'Todas' 
-    ? images 
+  // Función para obtener la mejor URL posible de una imagen de Drive
+  const getImageUrl = (img, isFullSize = false) => {
+    if (!img) return '';
+
+    // Si ya es una URL externa (como las de Unsplash en el fallback)
+    if (img.webContentLink && img.webContentLink.includes('unsplash.com')) {
+      return img.webContentLink;
+    }
+
+    // 1. Intentar con thumbnailLink con alta resolución (más fiable para visualización web)
+    if (img.thumbnailLink) {
+      const size = isFullSize ? '=s1600' : '=s800';
+      return img.thumbnailLink.replace(/=s\d+$/, size);
+    }
+
+    // 2. Fallback al formato de previsualización directa (export=view)
+    if (img.id) {
+      return `https://drive.google.com/uc?export=view&id=${img.id}`;
+    }
+
+    // 3. Último recurso: webContentLink (aunque puede forzar descarga)
+    return img.webContentLink || '';
+  };
+
+  const handleImageError = (e, img) => {
+    // Si falla la miniatura, intentar el link directo de Drive como fallback final
+    if (img.id && !e.target.src.includes('export=view')) {
+      e.target.src = `https://drive.google.com/uc?export=view&id=${img.id}`;
+    }
+  };
+
+  const filteredImages = activeFilter === 'Todas'
+    ? images
     : images.filter(img => img.category === activeFilter);
 
   const displayedImages = limit ? filteredImages.slice(0, limit) : filteredImages;
@@ -61,14 +92,14 @@ export default function Gallery({ limit, showFilters = false }) {
     <>
       {showFilters && (
         <div className="gallery-filters">
-          <button 
+          <button
             className={`filter-btn ${activeFilter === 'Todas' ? 'active' : ''}`}
             onClick={() => setActiveFilter('Todas')}
           >
             Todas
           </button>
           {Object.keys(CATEGORIES).map(cat => (
-            <button 
+            <button
               key={cat}
               className={`filter-btn ${activeFilter === cat ? 'active' : ''}`}
               onClick={() => setActiveFilter(cat)}
@@ -81,19 +112,20 @@ export default function Gallery({ limit, showFilters = false }) {
 
       <div className="gallery-grid">
         {displayedImages.map((img) => {
-          const imageUrl = img.webContentLink || img.thumbnailLink?.replace('=s220', '=s800');
-          
+          const imageUrl = getImageUrl(img);
+
           return (
-            <div 
-              key={img.id} 
+            <div
+              key={img.id}
               className="gallery-item"
               onClick={() => openLightbox(img)}
             >
-              <img 
-                src={imageUrl} 
-                alt={img.name || 'Trabajo de manicura'} 
-                loading="lazy" 
+              <img
+                src={imageUrl}
+                alt={img.name || 'Trabajo de manicura'}
+                loading="lazy"
                 className="gallery-image"
+                onError={(e) => handleImageError(e, img)}
               />
               <div className="gallery-overlay">
                 <span>Ver foto</span>
@@ -105,8 +137,8 @@ export default function Gallery({ limit, showFilters = false }) {
 
       {displayedImages.length === 0 && (
         <p className="no-images-text">
-          {error 
-            ? "Hubo un error al conectar con Google Drive. Por favor, verifica la configuración." 
+          {error
+            ? "Hubo un error al conectar con Google Drive. Por favor, verifica la configuración."
             : "No hay imágenes en esta categoría todavía."}
         </p>
       )}
@@ -118,10 +150,11 @@ export default function Gallery({ limit, showFilters = false }) {
             <X size={32} />
           </button>
           <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-            <img 
-              src={selectedImage.webContentLink || selectedImage.thumbnailLink?.replace('=s220', '=s1200')} 
-              alt={selectedImage.name} 
+            <img
+              src={getImageUrl(selectedImage, true)}
+              alt={selectedImage.name}
               className="lightbox-image"
+              onError={(e) => handleImageError(e, selectedImage)}
             />
           </div>
         </div>
