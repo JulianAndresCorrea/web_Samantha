@@ -1,13 +1,21 @@
 import axios from 'axios';
 
-// Limpiamos los valores de las variables por si vienen con espacios desde los Secrets de GitHub
+// Función para extraer solo el ID de la carpeta si se pega el enlace completo o con parámetros
+const cleanDriveId = (id) => {
+  if (!id) return '';
+  // Si es una URL completa, extraemos lo que hay después de /folders/
+  // Si tiene parámetros (?usp=sharing), nos quedamos con lo de antes del ?
+  const part = id.split('/folders/').pop() || id;
+  return part.split('?')[0].split('/')[0].trim();
+};
+
 const API_KEY = (import.meta.env.VITE_DRIVE_API_KEY || '').trim();
 
 export const CATEGORIES = {
-  'Semipermanente': (import.meta.env.VITE_DRIVE_FOLDER_SEMIPERMANENTE || '').trim(),
-  'Press-On': (import.meta.env.VITE_DRIVE_FOLDER_PRESS_ON || '').trim(),
-  'Polygel': (import.meta.env.VITE_DRIVE_FOLDER_POLYGEL || '').trim(),
-  'Manicura-Tradicional': (import.meta.env.VITE_DRIVE_FOLDER_TRADICIONAL || '').trim(),
+  'Semipermanente': cleanDriveId(import.meta.env.VITE_DRIVE_FOLDER_SEMIPERMANENTE),
+  'Press-On': cleanDriveId(import.meta.env.VITE_DRIVE_FOLDER_PRESS_ON),
+  'Polygel': cleanDriveId(import.meta.env.VITE_DRIVE_FOLDER_POLYGEL),
+  'Manicura-Tradicional': cleanDriveId(import.meta.env.VITE_DRIVE_FOLDER_TRADICIONAL),
 };
 
 const BASE_URL = 'https://www.googleapis.com/drive/v3/files';
