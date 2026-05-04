@@ -6,6 +6,7 @@ import './Gallery.css';
 export default function Gallery({ limit, showFilters = false }) {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [activeFilter, setActiveFilter] = useState('Todas');
 
@@ -14,10 +15,15 @@ export default function Gallery({ limit, showFilters = false }) {
       setLoading(true);
       const driveImages = await getAllImages();
       
-      if (driveImages && driveImages.length > 0) {
+      if (driveImages === null) {
+        // Error real de conexión/configuración con Drive
+        setError(true);
+        setImages([]);
+      } else if (driveImages && driveImages.length > 0) {
         setImages(driveImages);
+        setError(false);
       } else {
-        // Fallback mock images 
+        // Fallback mock images si no hay imágenes o la configuración es la de por defecto
         setImages([
           { id: '1', webContentLink: 'https://images.unsplash.com/photo-1519014816548-bf5fe059e98b?auto=format&fit=crop&q=80&w=800', name: 'Manicura 1', category: 'Semipermanente' },
           { id: '2', webContentLink: 'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&q=80&w=800', name: 'Manicura 2', category: 'Press-On' },
@@ -98,7 +104,11 @@ export default function Gallery({ limit, showFilters = false }) {
       </div>
 
       {displayedImages.length === 0 && (
-        <p className="no-images-text">No hay imágenes en esta categoría todavía.</p>
+        <p className="no-images-text">
+          {error 
+            ? "Hubo un error al conectar con Google Drive. Por favor, verifica la configuración." 
+            : "No hay imágenes en esta categoría todavía."}
+        </p>
       )}
 
       {/* Lightbox */}
